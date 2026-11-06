@@ -1,5 +1,20 @@
 # ML Observability Scaling Code Project
 
+<!-- v2-release -->
+## Version 2.0 (November 2026)
+
+The v2 release is a preregistered, reproducible rewrite of the paper:
+**Scaling ML Observability from Pilot to Portfolio: Measured Drift-Detector Behavior and False-Alarm Control for Hundreds of Models**
+
+- Paper, code, data sources, results and tests: [`v2/`](v2/)
+- Archived on Zenodo: [10.5281/zenodo.23970096](https://doi.org/10.5281/zenodo.23970096) (v1: [10.5281/zenodo.18445588](https://doi.org/10.5281/zenodo.18445588))
+- Preregistered verdict: SUPPORTED
+- Reproduce: `python v2/code/run_all.py`
+
+Every number in the v2 paper is produced by this code from logged results. Claims from v1 that had no
+supporting data were removed; `v2/REVIEW.md` lists them.
+<!-- v2-release -->
+
 **Author:** Bhavin Kotak (kotak.bhavin@gmail.com | bhavin.kotak@ibm.com)
 
 Implementation of concepts from the research paper: *"Scalable ML Observability: A Multi-Layered Architecture for Production Model Monitoring"*

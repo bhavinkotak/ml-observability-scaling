@@ -1,0 +1,81 @@
+{
+ "title": "Scaling ML Observability from Pilot to Portfolio: Measured Drift-Detector Behavior and False-Alarm Control for Hundreds of Models",
+ "upload_type": "publication",
+ "publication_type": "preprint",
+ "description": "<p>Version 1 of this paper proposed a way to scale machine learning observability from one model to a portfolio, but its quantitative claims could not be traced to data or code. This revision replaces them with measurements. We benchmark five univariate drift detectors (population stability index, Kullback-Leibler divergence, binned chi-square, Kolmogorov-Smirnov, and Wasserstein-1) on 27 features from three public datasets with injected drift. We also simulate portfolios of up to 1000 models with 20 monitored features each, and on the real Elec2 electricity stream we compare input-drift alarms with performance alarms. Drift in the first two studies is simulated. A rule-of-thumb threshold does not fix a false alarm rate: the PSI rule fired on 22.1% of no-drift numeric windows of 100 rows and on none of 2000 rows. Once every detector was calibrated to the same false alarm rate, none was best for all drift types. In the simulated portfolio of 1000 models, per-test thresholds raised 956.4 false feature alarms per day. The Benjamini-Hochberg procedure removed 99.6% of them and kept 86.6% of the per-test three-day event recall, so our preregistered hypothesis is supported. With 100-row windows, though, its three-day recall fell to 0.580. On Elec2, input-drift tests fired in all 200 monitored weeks and performance alarms in 138. Input drift was useful there for triage but could not stand in for a measure of accuracy. Code, data provenance, and logged results are archived with the paper.</p><p><strong>Changes in version 2.0</strong></p><ul><li>Removed every quantitative claim of version 1 that could not be traced to data or logs: industry statistics, case-study results, the detector accuracy table, and the claimed reductions in detection time and alert fatigue.</li><li>Added preregistered experiments on public data (OpenML adult, bank-marketing, electricity) with simulated drift: a calibrated detector benchmark, false alarm rates of rule-of-thumb thresholds, streaming delay, and compute time.</li><li>Added a portfolio simulation of up to 1000 models that compares per-test, Bonferroni, Benjamini-Hochberg, and hierarchical alarm policies, with breakpoint scenarios for correlation, missing results, and window size.</li><li>Added a study of how input-drift alarms agree with performance alarms on the real Elec2 stream.</li><li>Added a formal system model, defined outcome handling for missing data, abstentions, and timeouts, and a section on threats to validity.</li><li>Rebuilt the reference list from records that have a DOI or arXiv ID. Code, data provenance, and results are archived with the paper.</li></ul><p>Reproduce: <em>python code/run_all.py</em> (Python 3.12, numpy, scipy, pandas, scikit-learn, matplotlib). Tests: <em>python -m pytest tests</em>.</p>",
+ "creators": [
+  {
+   "name": "Kotak, Bhavin",
+   "affiliation": "IBM, Armonk, NY",
+   "orcid": "0009-0006-4793-7046"
+  }
+ ],
+ "keywords": [
+  "concept drift",
+  "dataset shift",
+  "drift detection",
+  "false discovery rate",
+  "multiple testing",
+  "model monitoring",
+  "MLOps",
+  "population stability index"
+ ],
+ "license": "cc-by-4.0",
+ "access_right": "open",
+ "version": "2.0",
+ "language": "eng",
+ "references": [
+  "Y. Benjamini and Y. Hochberg, \"Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing,\" J. R. Stat. Soc. B, vol. 57, no. 1, pp. 289-300, 1995. doi:10.1111/j.2517-6161.1995.tb02031.x",
+  "Y. Benjamini and D. Yekutieli, \"The control of the false discovery rate in multiple testing under dependency,\" Ann. Statist., vol. 29, no. 4, pp. 1165-1188, 2001. doi:10.1214/aos/1013699998",
+  "J. D. Storey, \"A Direct Approach to False Discovery Rates,\" J. R. Stat. Soc. B, vol. 64, no. 3, pp. 479-498, 2002. doi:10.1111/1467-9868.00346",
+  "O. J. Dunn, \"Multiple Comparisons among Means,\" J. Amer. Statist. Assoc., vol. 56, no. 293, pp. 52-64, 1961. doi:10.1080/01621459.1961.10482090",
+  "A. Javanmard and A. Montanari, \"Online rules for control of false discovery rate and false discovery exceedance,\" Ann. Statist., vol. 46, no. 2, pp. 526-554, 2018. doi:10.1214/17-AOS1559",
+  "A. Ramdas, F. Yang, M. J. Wainwright, and M. I. Jordan, \"Online control of the false discovery rate with decaying memory,\" arXiv:1710.00499, 2017.",
+  "J. Gama, I. Zliobaite, A. Bifet, M. Pechenizkiy, and A. Bouchachia, \"A survey on concept drift adaptation,\" ACM Comput. Surv., vol. 46, no. 4, 2014. doi:10.1145/2523813",
+  "J. Lu, A. Liu, F. Dong, F. Gu, J. Gama, and G. Zhang, \"Learning under Concept Drift: A Review,\" IEEE Trans. Knowl. Data Eng., vol. 31, no. 12, pp. 2346-2363, 2019. doi:10.1109/TKDE.2018.2876857",
+  "G. I. Webb, R. Hyde, H. Cao, H. L. Nguyen, and F. Petitjean, \"Characterizing concept drift,\" Data Min. Knowl. Disc., vol. 30, no. 4, pp. 964-994, 2016. doi:10.1007/s10618-015-0448-4",
+  "J. G. Moreno-Torres, T. Raeder, R. Alaiz-Rodriguez, N. V. Chawla, and F. Herrera, \"A unifying view on dataset shift in classification,\" Pattern Recognit., vol. 45, no. 1, pp. 521-530, 2012. doi:10.1016/j.patcog.2011.06.019",
+  "I. Zliobaite, \"Learning under Concept Drift: an Overview,\" arXiv:1010.4784, 2010.",
+  "S. Rabanser, S. Gunnemann, and Z. C. Lipton, \"Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift,\" NeurIPS 2019. arXiv:1810.11953",
+  "Z. C. Lipton, Y.-X. Wang, and A. Smola, \"Detecting and Correcting for Label Shift with Black Box Predictors,\" ICML 2018. arXiv:1802.03916",
+  "H. Shimodaira, \"Improving predictive inference under covariate shift by weighting the log-likelihood function,\" J. Stat. Plan. Inference, vol. 90, no. 2, pp. 227-244, 2000. doi:10.1016/S0378-3758(00)00115-4",
+  "A. Gretton, K. Borgwardt, M. J. Rasch, B. Scholkopf, and A. J. Smola, \"A Kernel Method for the Two-Sample Problem,\" arXiv:0805.2368, 2008.",
+  "S. Garg, S. Balakrishnan, Z. C. Lipton, B. Neyshabur, and H. Sedghi, \"Leveraging Unlabeled Data to Predict Out-of-Distribution Performance,\" arXiv:2201.04234, 2022.",
+  "E. S. Page, \"Continuous Inspection Schemes,\" Biometrika, vol. 41, no. 1-2, pp. 100-115, 1954. doi:10.1093/biomet/41.1-2.100",
+  "J. Gama, P. Medas, G. Castillo, and P. Rodrigues, \"Learning with Drift Detection,\" SBIA 2004, LNCS 3171, pp. 286-295. doi:10.1007/978-3-540-28645-5_29",
+  "A. Bifet and R. Gavalda, \"Learning from Time-Changing Data with Adaptive Windowing,\" SIAM SDM 2007, pp. 443-448. doi:10.1137/1.9781611972771.42",
+  "S. Kullback and R. A. Leibler, \"On Information and Sufficiency,\" Ann. Math. Statist., vol. 22, no. 1, pp. 79-86, 1951. doi:10.1214/aoms/1177729694",
+  "F. J. Massey, \"The Kolmogorov-Smirnov Test for Goodness of Fit,\" J. Amer. Statist. Assoc., vol. 46, no. 253, pp. 68-78, 1951. doi:10.1080/01621459.1951.10500769",
+  "A. Ramdas, N. Garcia Trillos, and M. Cuturi, \"On Wasserstein Two-Sample Testing and Related Families of Nonparametric Tests,\" Entropy, vol. 19, no. 2, p. 47, 2017. doi:10.3390/e19020047",
+  "B. Yurdakul and J. Naranjo, \"Statistical properties of the population stability index,\" J. Risk Model Validation, 2020. doi:10.21314/JRMV.2020.227",
+  "J. Cohen, \"A Coefficient of Agreement for Nominal Scales,\" Educ. Psychol. Meas., vol. 20, no. 1, pp. 37-46, 1960. doi:10.1177/001316446002000104",
+  "L. Breiman, \"Random Forests,\" Mach. Learn., vol. 45, no. 1, pp. 5-32, 2001. doi:10.1023/A:1010933404324",
+  "E. Breck, S. Cai, E. Nielsen, M. Salib, and D. Sculley, \"The ML test score: A rubric for ML production readiness and technical debt reduction,\" IEEE Big Data 2017, pp. 1123-1132. doi:10.1109/BigData.2017.8258038",
+  "A. Paleyes, R.-G. Urma, and N. D. Lawrence, \"Challenges in Deploying Machine Learning: A Survey of Case Studies,\" ACM Comput. Surv., vol. 55, no. 6, 2022. doi:10.1145/3533378",
+  "S. Amershi et al., \"Software Engineering for Machine Learning: A Case Study,\" ICSE-SEIP 2019, pp. 291-300. doi:10.1109/ICSE-SEIP.2019.00042",
+  "S. Shankar, R. Garcia, J. M. Hellerstein, and A. G. Parameswaran, \"Operationalizing Machine Learning: An Interview Study,\" arXiv:2209.09125, 2022.",
+  "N. Polyzotis, S. Roy, S. E. Whang, and M. Zinkevich, \"Data Lifecycle Challenges in Production Machine Learning: A Survey,\" SIGMOD Rec., vol. 47, no. 2, pp. 17-28, 2018. doi:10.1145/3299887.3299891",
+  "S. Schelter et al., \"Automating large-scale data quality verification,\" Proc. VLDB Endow., vol. 11, no. 12, pp. 1781-1794, 2018. doi:10.14778/3229863.3229867",
+  "D. Baylor et al., \"TFX: A TensorFlow-Based Production-Scale Machine Learning Platform,\" KDD 2017, pp. 1387-1395. doi:10.1145/3097983.3098021",
+  "J. Klaise, A. Van Looveren, C. Cox, G. Vacanti, and A. Coca, \"Monitoring and explainability of models in production,\" arXiv:2007.06299, 2020.",
+  "J. Vanschoren, J. N. van Rijn, B. Bischl, and L. Torgo, \"OpenML: networked science in machine learning,\" SIGKDD Explor., vol. 15, no. 2, pp. 49-60, 2014. doi:10.1145/2641190.2641198",
+  "M. Feurer et al., \"OpenML-Python: an extensible Python API for OpenML,\" arXiv:1911.02490, 2019.",
+  "S. Moro, P. Cortez, and P. Rita, \"A data-driven approach to predict the success of bank telemarketing,\" Decis. Support Syst., vol. 62, pp. 22-31, 2014. doi:10.1016/j.dss.2014.03.001",
+  "M. Harries, \"Splice-2 comparative evaluation: Electricity pricing\" (Elec2 data set), 1999. https://www.openml.org/d/151",
+  "B. Becker and R. Kohavi, \"Adult\" data set, UCI Machine Learning Repository, 1996. https://www.openml.org/d/1590",
+  "F. Pedregosa et al., \"Scikit-learn: Machine Learning in Python,\" J. Mach. Learn. Res., vol. 12, pp. 2825-2830, 2011. arXiv:1201.0490",
+  "P. Virtanen et al., \"SciPy 1.0: fundamental algorithms for scientific computing in Python,\" Nat. Methods, vol. 17, no. 3, pp. 261-272, 2020. doi:10.1038/s41592-019-0686-2",
+  "Evidently AI, Evidently (software). https://github.com/evidentlyai/evidently",
+  "Seldon Technologies, Alibi Detect (software). https://github.com/SeldonIO/alibi-detect",
+  "NannyML (software). https://github.com/NannyML/nannyml"
+ ],
+ "notes": "Reproduction: unzip ml-observability-scaling-v2-code-data.zip, install numpy, scipy, pandas, scikit-learn, matplotlib, pytest, then run 'python code/run_all.py' from the package root. It downloads/caches the OpenML data under data/raw, runs all experiments with seeds 0-4, writes results/ and regenerates paper/figures and paper/tables. 'python -m pytest tests' runs the unit tests.",
+ "related_identifiers": [
+  {
+   "relation": "isSupplementedBy",
+   "identifier": "https://github.com/bhavinkotak/ml-observability-scaling",
+   "resource_type": "software",
+   "scheme": "url"
+  }
+ ]
+}

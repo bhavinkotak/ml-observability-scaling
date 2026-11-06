@@ -1,0 +1,47 @@
+{
+  "title": "Drift monitoring at portfolio scale: per-test thresholds versus family-wise and false-discovery-rate control",
+  "registered": "2026-11-04",
+  "registered_before_running": true,
+  "primary_hypothesis": {
+    "id": "H1",
+    "statement": "In a simulated portfolio of N=1000 models with F=20 monitored features each (daily windows of n=200 rows, reference samples of m=1000 rows, two-sample KS tests), applying the Benjamini-Hochberg procedure at q=0.05 to each day's family of tests reduces the mean number of false feature-level alarms per day by at least 90% relative to per-test thresholds at alpha=0.05, while detecting within 3 days at least 80% of the simulated drift events that per-test thresholds detect within 3 days.",
+    "primary_endpoint": [
+      "R_FA = 1 - FA_BH / FA_per-test, where FA = mean number of rejected tests per day whose feature is not drifted on that day",
+      "RR = recall3_BH / recall3_per-test, where recall3 = fraction of drift events with at least one drifted feature rejected within 3 days of onset"
+    ],
+    "unit_of_replication": "simulation seed (5 seeds: 0,1,2,3,4); endpoints are computed per seed, then mean and t-based 95% CI across seeds",
+    "baseline": "per-test thresholds at alpha=0.05 (no multiplicity control), which is how single-model drift monitors are typically configured",
+    "comparators": ["Bonferroni at family-wise alpha=0.05 per day", "hierarchical: per-model Bonferroni-combined p-value, then BH across models at q=0.05"],
+    "decision_rule": "SUPPORTED if the lower 95% CI bound of R_FA >= 0.90 AND the lower 95% CI bound of RR >= 0.80. REFUTED if the upper 95% CI bound of R_FA < 0.90 OR the upper 95% CI bound of RR < 0.80. Otherwise INCONCLUSIVE.",
+    "falsification_rule": "H1 is falsified if BH retains less than 80% of per-test 3-day event recall with the whole 95% CI below 0.80, or if it removes less than 90% of false alarms with the whole 95% CI below 0.90."
+  },
+  "secondary_hypotheses": [
+    {
+      "id": "H2",
+      "statement": "The PSI rule-of-thumb threshold 0.1 (B=10 reference-quantile bins, 0.5 additive smoothing) is not sample-size invariant: on no-drift windows drawn from real public tabular features, its false alarm rate at window size n=100 exceeds its false alarm rate at n=2000 by more than 10 percentage points.",
+      "endpoint": "difference in no-drift false alarm rate (numeric features, averaged over features), per seed",
+      "decision_rule": "SUPPORTED if the lower 95% CI bound of the difference > 0.10; REFUTED if the upper bound < 0.10; else INCONCLUSIVE."
+    },
+    {
+      "id": "H3",
+      "statement": "On the electricity (Elec2) stream with its real temporal order, weekly input-drift alarms (KS per feature with BH at q=0.05 across features) and weekly performance-drop alarms (one-sided two-proportion z-test of batch error versus validation error at alpha=0.05) agree at most fairly: Cohen's kappa < 0.4.",
+      "endpoint": "Cohen's kappa between the two weekly alarm series over 40 monitored weeks, per run (5 runs with different training windows and model seeds)",
+      "decision_rule": "SUPPORTED if the upper 95% CI bound of kappa < 0.4; REFUTED if the lower bound >= 0.4; else INCONCLUSIVE."
+    }
+  ],
+  "exploratory": [
+    "TPR at a calibrated per-window FPR of 0.05 for PSI, KL, Wasserstein-1, KS, and binned chi-square across injected drift types, magnitudes, and window sizes on real feature distributions (adult, bank-marketing, electricity)",
+    "detection delay under a gradual mean-shift ramp in a streaming setting",
+    "compute time per detector call",
+    "portfolio breakpoints: within-model feature correlation (rho=0.6), 10% missing test results, window size 100 and 500"
+  ],
+  "simulation_disclosure": "All drift in the detector benchmark and the portfolio study is injected (simulated). Only H3 uses a real temporal shift.",
+  "analysis_plan_fixed_constants": {
+    "seeds": [0, 1, 2, 3, 4],
+    "alpha": 0.05,
+    "q": 0.05,
+    "psi_bins": 10,
+    "smoothing": 0.5,
+    "recall_horizon_days": 3
+  }
+}

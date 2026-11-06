@@ -1,0 +1,48 @@
+{
+ "hypothesis": "H1",
+ "verdict": "SUPPORTED",
+ "H1": {
+  "verdict": "SUPPORTED",
+  "R_FA": {
+   "mean": 0.9956,
+   "std": 0.0004,
+   "ci_lo": 0.9952,
+   "ci_hi": 0.9961,
+   "n": 5
+  },
+  "R_FA_rule": "SUPPORTED",
+  "RR": {
+   "mean": 0.8661,
+   "std": 0.0132,
+   "ci_lo": 0.8497,
+   "ci_hi": 0.8825,
+   "n": 5
+  },
+  "RR_rule": "SUPPORTED",
+  "thresholds": {
+   "R_FA": 0.9,
+   "RR": 0.8
+  }
+ },
+ "H2": {
+  "verdict": "SUPPORTED",
+  "psi_fpr_gap": {
+   "mean": 0.2212,
+   "std": 0.006,
+   "ci_lo": 0.2137,
+   "ci_hi": 0.2287,
+   "n": 5
+  }
+ },
+ "H3": {
+  "verdict": "SUPPORTED",
+  "kappa": {
+   "mean": 0.0,
+   "std": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0,
+   "n": 4
+  }
+ },
+ "note": "Decision rules as registered in preregistration.json; drift in H1 and H2 is simulated."
+}

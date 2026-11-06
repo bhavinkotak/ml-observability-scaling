@@ -1,0 +1,14 @@
+{
+ "binned_psi_kl_chi2_n1000_us": 40.958,
+ "ks_scipy_n1000_us": 310.104,
+ "w1_scipy_n1000_us": 91.083,
+ "ks_and_w1_ours_n1000_us": 93.958,
+ "binned_psi_kl_chi2_n10000_us": 127.6045,
+ "ks_scipy_n10000_us": 4863.2915,
+ "w1_scipy_n10000_us": 2480.6455,
+ "ks_and_w1_ours_n10000_us": 1367.792,
+ "machine": "arm64",
+ "processor": "arm",
+ "python": "3.12.12",
+ "numpy": "2.5.4"
+}
