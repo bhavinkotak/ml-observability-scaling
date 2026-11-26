@@ -1,140 +1,109 @@
-# ML Observability Scaling Code Project
+# ML Observability Scaling
+
+Companion repository for two studies by Bhavin Kotak (`kotak.bhavin@gmail.com` | `bhavin.kotak@ibm.com`) on statistical drift detection, false-discovery-rate control across model portfolios, and production alerting.
+
+![ML observability scaling pipeline](./docs/diagrams/observability-pipeline.svg)
+
+Interactive HTML version: [`docs/diagrams/observability-pipeline.html`](./docs/diagrams/observability-pipeline.html)
 
 <!-- v2-release -->
-## Version 2.0 (November 2026)
+## Version 2.0 study (November 2026)
 
-The v2 release is a preregistered, reproducible rewrite of the paper:
-**Scaling ML Observability from Pilot to Portfolio: Measured Drift-Detector Behavior and False-Alarm Control for Hundreds of Models**
+Version 2.0 is a preregistered empirical and simulation study: *Scaling ML Observability from Pilot to Portfolio: Measured Drift-Detector Behavior and False-Alarm Control for Hundreds of Models* ([`v2/paper/main.pdf`](v2/paper/main.pdf)).
 
-- Paper, code, data sources, results and tests: [`v2/`](v2/)
-- Archived on Zenodo: [10.5281/zenodo.23970096](https://doi.org/10.5281/zenodo.23970096) (v1: [10.5281/zenodo.18445588](https://doi.org/10.5281/zenodo.18445588))
-- Preregistered verdict: SUPPORTED
-- Reproduce: `python v2/code/run_all.py`
+- Code, preregistration, logged runs, and tests: [`v2/`](v2/)
+- Zenodo archive: [10.5281/zenodo.23970096](https://doi.org/10.5281/zenodo.23970096) (v1: [10.5281/zenodo.18445588](https://doi.org/10.5281/zenodo.18445588))
+- Preregistered verdict: `SUPPORTED` (H1, H2, and H3)
+- Key logged results: across a simulated portfolio of `N = 1,000` models with `20` features each, Benjamini-Hochberg control at `q = 0.05` cuts false feature-level alarms per day by `99.56%` (95% CI `[99.52%, 99.61%]`) relative to unadjusted `alpha = 0.05` thresholds while retaining `86.61%` (95% CI `[84.97%, 88.25%]`) of 3-day event recall. On no-drift real tabular features, the `PSI >= 0.1` rule-of-thumb false-alarm rate is `22.1` percentage points higher at `n = 100` than at `n = 2,000` (H2). On the Elec2 temporal stream, weekly feature-drift alarms and weekly accuracy-drop alarms show `kappa = 0.0` agreement (H3).
+- Reproduce everything: `python v2/code/run_all.py` and `pytest v2/tests/test_core.py -v`
 
-Every number in the v2 paper is produced by this code from logged results. Claims from v1 that had no
-supporting data were removed; `v2/REVIEW.md` lists them.
+Every number in the v2 paper comes directly from logged outputs in `v2/results/`. Unsupported v1 claims were removed and listed in [`v2/REVIEW.md`](v2/REVIEW.md).
 <!-- v2-release -->
 
-**Author:** Bhavin Kotak (kotak.bhavin@gmail.com | bhavin.kotak@ibm.com)
+## Reference library (`src/`)
 
-Implementation of concepts from the research paper: *"Scalable ML Observability: A Multi-Layered Architecture for Production Model Monitoring"*
+The `src/` package contains the standalone v1 monitoring modules (*Scalable ML Observability: A Multi-Layered Architecture for Production Model Monitoring*): `DriftDetector` (PSI, Jensen-Shannon / KL divergence, two-sample Kolmogorov-Smirnov, and Wasserstein-1 distance), `MetricsCollector`, rule-based `AlertManager`, and `MonitoringDashboard`.
 
-## Overview
-
-This code project demonstrates a comprehensive ML observability framework with:
-
-- **Drift Detection**: Multiple statistical methods for detecting distribution drift
-- **Metrics Collection**: Time-series metrics with aggregation and export
-- **Alert Management**: Rule-based alerting with severity levels
-- **Monitoring Dashboard**: Dashboard data generation for visualization
-
-## Project Structure
+## Project layout
 
 ```
 ml-observability-scaling/
+├── docs/diagrams/              # Editorial pipeline diagram (.html + .svg)
+├── v2/
+│   ├── code/obsbench/          # Portfolio FDR simulator, detector benchmark, Elec2 study
+│   ├── code/run_all.py         # End-to-end v2 reproduction entrypoint
+│   ├── paper/                  # LaTeX source, tables, figures, and main.pdf
+│   ├── preregistration.json    # Locked hypotheses H1-H3 and decision rules
+│   ├── results/                # Logged CSV/JSON outputs and verdict.json
+│   └── tests/test_core.py      # Statistical detector and BH/FDR unit tests
 ├── src/
-│   ├── __init__.py
-│   ├── drift_detection.py    # Drift detection algorithms
-│   ├── monitoring.py         # Metrics and alerting
-│   └── data_generators.py    # Synthetic data for testing
-├── tests/
-│   └── test_observability.py # Comprehensive test suite
-├── data/                     # Generated data
-├── requirements.txt
-└── README.md
+│   ├── drift_detection.py      # PSICalculator, KLDivergenceCalculator, KSTestDetector, WassersteinDetector
+│   ├── monitoring.py           # MetricsCollector, AlertManager, MonitoringDashboard
+│   └── data_generators.py      # Synthetic drift stream generators
+├── tests/test_observability.py # Unit tests for src/
+└── requirements.txt
 ```
 
 ## Installation
 
 ```bash
-# Create virtual environment
 python -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Quick Start
+## Quick start (`src/`)
 
-### Drift Detection
+### Drift detection
 
 ```python
 from src.drift_detection import DriftDetector
 import pandas as pd
 import numpy as np
 
-# Create detector
 detector = DriftDetector()
 
-# Reference data (training distribution)
 reference_df = pd.DataFrame({
     'feature_1': np.random.normal(100, 15, 1000),
     'feature_2': np.random.normal(50, 10, 1000)
 })
 
-# Current data (production)
 current_df = pd.DataFrame({
-    'feature_1': np.random.normal(110, 20, 500),  # Drifted!
-    'feature_2': np.random.normal(50, 10, 500)    # No drift
+    'feature_1': np.random.normal(110, 20, 500),
+    'feature_2': np.random.normal(50, 10, 500)
 })
 
-# Detect drift
 results = detector.detect_drift(reference_df, current_df)
 print(f"Drifted features: {results['summary']['drifted_feature_names']}")
-
-# Get detailed report
-report = detector.get_drift_report(reference_df, current_df)
-print(report)
 ```
 
-### Individual Drift Methods
+### Individual drift calculators
 
 ```python
 from src.drift_detection import (
-    PSICalculator, KLDivergenceCalculator, 
-    KSTestDetector, WassersteinDetector
+    PSICalculator, KSTestDetector, WassersteinDetector
 )
 
 reference = np.random.normal(100, 15, 1000)
 current = np.random.normal(110, 15, 500)
 
-# PSI
-psi = PSICalculator()
-result = psi.calculate(reference, current)
-print(f"PSI Score: {result.drift_score:.4f}")
-
-# KS Test
-ks = KSTestDetector()
-result = ks.calculate(reference, current)
-print(f"KS p-value: {result.p_value:.4f}")
-
-# Wasserstein
-ws = WassersteinDetector()
-result = ws.calculate(reference, current)
-print(f"Wasserstein Distance: {result.drift_score:.4f}")
+print(f"PSI: {PSICalculator().calculate(reference, current).drift_score:.4f}")
+print(f"KS p-value: {KSTestDetector().calculate(reference, current).p_value:.4f}")
+print(f"Wasserstein: {WassersteinDetector().calculate(reference, current).drift_score:.4f}")
 ```
 
-### Monitoring and Alerting
+### Metrics, alert rules, and dashboard
 
 ```python
 from src.monitoring import (
-    MetricsCollector, AlertManager, 
+    MetricsCollector, AlertManager,
     MonitoringDashboard, AlertRule, AlertSeverity
 )
 
-# Create collector
 collector = MetricsCollector()
-
-# Record metrics
 collector.record_metric("prediction_latency", 0.05)
 collector.record_metric("model_accuracy", 0.95)
 
-# Get summary
-summary = collector.get_summary("prediction_latency")
-print(f"P95 Latency: {summary['p95']:.4f}s")
-
-# Setup alerting
 alert_manager = AlertManager()
 alert_manager.add_rule(AlertRule(
     name="high_latency",
@@ -145,83 +114,37 @@ alert_manager.add_rule(AlertRule(
     message_template="Latency {value:.3f}s exceeds {threshold}s"
 ))
 
-# Check for alerts
-alerts = alert_manager.check_metrics(collector)
-for alert in alerts:
+for alert in alert_manager.check_metrics(collector):
     print(f"[{alert.severity.value}] {alert.message}")
 
-# Create dashboard
 dashboard = MonitoringDashboard(collector, alert_manager)
-overview = dashboard.get_overview()
-print(f"System Health: {overview['health_status']}")
+print(f"System health: {dashboard.get_overview()['health_status']}")
 ```
 
-## Drift Detection Methods
-
-### Population Stability Index (PSI)
-
-Measures how much a distribution has shifted:
-- PSI < 0.1: No significant change
-- 0.1 ≤ PSI < 0.25: Moderate change
-- PSI ≥ 0.25: Significant change
-
-### KL Divergence / Jensen-Shannon
-
-Measures information-theoretic distance between distributions. Uses Jensen-Shannon divergence for symmetric comparison.
-
-### Kolmogorov-Smirnov Test
-
-Statistical test comparing cumulative distributions. Returns p-value for hypothesis testing.
-
-### Wasserstein Distance
-
-Earth Mover's Distance - the minimum "work" to transform one distribution into another.
-
-## Alert Severity Levels
-
-| Level | Description |
-|-------|-------------|
-| INFO | Informational, no action needed |
-| WARNING | Investigate, may need attention |
-| CRITICAL | Immediate attention required |
-| EMERGENCY | System-wide impact, urgent |
-
-## Running Tests
+## Running studies and tests
 
 ```bash
-# Run all tests
-pytest tests/test_observability.py -v
+# Reproduce the v2 portfolio study and run v2 tests
+python v2/code/run_all.py
+pytest v2/tests/test_core.py -v
 
-# Run with coverage
-pytest tests/test_observability.py -v --cov=src
-
-# Run specific test class
-pytest tests/test_observability.py::TestDriftDetector -v
-```
-
-## Running the Demos
-
-```bash
-# Test drift detection
+# Run v1 demos and unit tests
 python src/drift_detection.py
-
-# Test monitoring
 python src/monitoring.py
-
-# Test data generators
-python src/data_generators.py
+pytest tests/test_observability.py -v
 ```
 
-## Architecture Alignment
+## Detectors and alert levels
 
-| Paper Concept | Implementation |
-|--------------|----------------|
-| Multi-method drift detection | `PSICalculator`, `KLDivergenceCalculator`, `KSTestDetector`, `WassersteinDetector` |
-| Unified drift detector | `DriftDetector` class |
-| Metrics collection | `MetricsCollector` with time-series support |
-| Alert management | `AlertManager` with rules and severity |
-| Dashboard generation | `MonitoringDashboard` class |
+| Component | Summary |
+|-----------|---------|
+| `PSICalculator` | Quantile-binned Population Stability Index (`<0.1` minor, `>=0.25` large shift; sample-size dependent at small `n`, see H2) |
+| `KLDivergenceCalculator` | Symmetric Jensen-Shannon divergence over binned histograms |
+| `KSTestDetector` | Exact/asymptotic two-sample Kolmogorov-Smirnov test returning `D` and `p`-value |
+| `WassersteinDetector` | First Wasserstein (earth mover's) distance between empirical distributions |
+| `bh_reject` (`v2/code/obsbench/portfolio.py`) | Benjamini-Hochberg step-up procedure controlling daily portfolio FDR at `q = 0.05` |
+| `AlertSeverity` | Four levels: `INFO`, `WARNING`, `CRITICAL`, and `EMERGENCY` |
 
 ## License
 
-MIT License - See research paper for full attribution.
+MIT License.
